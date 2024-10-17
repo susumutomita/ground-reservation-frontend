@@ -130,3 +130,15 @@ dist
 .pnp.*
 
 .DS_Store
+
+# production
+/build
+
+# misc
+*.pem
+
+# vercel
+.vercel
+
+# typescript
+next-env.d.ts

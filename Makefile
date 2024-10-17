@@ -1,12 +1,8 @@
-.PHONY: install install_all setup_husky clean lint format format_check before_commit build_frontend start export_pdf help
+.PHONY: install setup_husky clean lint format format_check before_commit build_frontend start export_pdf help
 
 # Installation and Setup
 install:           # Install npm packages
 	npm install
-
-# Installation and Setup
-install_all:           # Install npm packages
-	npm run install-all
 
 setup_husky:      # Setup Husky for git hooks
 	npm run husky
@@ -26,13 +22,13 @@ format_check:      # Check code formatting
 
 # Build and Deployment
 build_frontend:    # Build the frontend
-	cd frontend && npm run build
+	npm run build
 
 start:             # Start the frontend
 	make start_frontend
 
 start_frontend:    # Build the frontend
-	cd app && npm run dev
+	npm run dev
 
 # Export Documentation
 export_pdf:        # Export pitch deck to PDF using Marp
@@ -47,7 +43,6 @@ help:              # Show this help message
 	@echo ""
 	@echo "Targets:"
 	@echo "  install         Install npm packages"
-	@echo "  install_all     Install npm packages for all workspaces"
 	@echo "  setup_husky     Setup Husky for git hooks"
 	@echo "  clean           Clean the project"
 	@echo "  lint            Run linter"

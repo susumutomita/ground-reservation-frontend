@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "ground-reservation-frontend repository",
   "main": "index.js",
-  "workspaces": [
-    "app"
-  ],
   "type": "module",
   "scripts": {
     "clean": "npx rimraf node_modules out",
@@ -15,13 +12,19 @@
     "lint": "npx textlint 'README.md'",
     "lint-staged": "lint-staged",
     "husky": "husky install",
-    "install-all": "npm install && npm install --prefix app"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint:app": "next lint"
   },
   "keywords": [],
   "author": "Susumu Tomita <oyter880@gmail.com> (https://susumutomita.netlify.app/)",
   "license": "MIT",
   "dependencies": {
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.2.15"
   },
   "devDependencies": {
     "@marp-team/marp-cli": "^3.4.0",
@@ -37,6 +40,13 @@
     "textlint-rule-prefer-tari-tari": "^1.0.3",
     "textlint-rule-preset-ja-spacing": "^2.2.0",
     "textlint-rule-preset-ja-technical-writing": "^10.0.1",
-    "textlint-rule-spellcheck-tech-word": "^5.0.0"
+    "textlint-rule-spellcheck-tech-word": "^5.0.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.15"
   }
 }
