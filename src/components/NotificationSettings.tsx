@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 
 const NotificationSettings = () => {
-  const [email, setEmail] = useState('');
-  const [webhookUrl, setWebhookUrl] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [email, setEmail] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/api/save-notification-settings', {
+      const response = await axios.post("/api/save-notification-settings", {
         email,
         webhookUrl,
         date,
@@ -19,11 +19,11 @@ const NotificationSettings = () => {
       });
 
       if (response.status === 200) {
-        alert('Notification settings saved successfully!');
+        alert("Notification settings saved successfully!");
       }
     } catch (error) {
-      console.error('Error saving notification settings:', error);
-      alert('Failed to save notification settings.');
+      console.error("Error saving notification settings:", error);
+      alert("Failed to save notification settings.");
     }
   };
 
