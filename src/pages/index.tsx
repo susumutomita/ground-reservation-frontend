@@ -1,12 +1,12 @@
-import { useSession, signIn, signOut } from 'next-auth/client'
-import AuthButton from '../components/AuthButton'
-import Dashboard from '../components/Dashboard'
+import { useSession, signIn, signOut } from "next-auth/client";
+import AuthButton from "../components/AuthButton";
+import Dashboard from "../components/Dashboard";
 
 export default function Home() {
-  const [session, loading] = useSession()
+  const [session, loading] = useSession();
 
   if (loading) {
-    return <p>Loading...</p>
+    return <p>Loading...</p>;
   }
 
   return (
@@ -20,5 +20,5 @@ export default function Home() {
         <Dashboard />
       )}
     </div>
-  )
+  );
 }
