@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import NotificationSettings from "./NotificationSettings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -19,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { NotificationSettings } from "@/components/NotificationSettings";
+import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 
 interface FieldAvailability {
@@ -29,14 +29,16 @@ interface FieldAvailability {
   available: boolean;
 }
 
-const Dashboard = () => {
+export default function Dashboard() {
+  const { data: session } = useSession();
   const [data, setData] = useState<FieldAvailability[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date(),
+    new Date()
   );
   const [selectedField, setSelectedField] = useState<string | undefined>(
-    undefined,
+    undefined
   );
+  const [monitoredDates, setMonitoredDates] = useState<Date[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -65,32 +67,64 @@ const Dashboard = () => {
 
   const uniqueFields = Array.from(new Set(data.map((item) => item.field)));
 
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+      if (!monitoredDates.some((d) => d.getTime() === date.getTime())) {
+        setMonitoredDates([...monitoredDates, date]);
+      }
+    }
+  };
+
+  const handleNotificationSave = async (
+    type: "email" | "webhook",
+    value: string
+  ) => {
+    if (session) {
+      try {
+        const response = await fetch("/api/save-notification-settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: session.user.id, type, value }),
+        });
+        if (response.ok) {
+          alert("通知設定が保存されました");
+        } else {
+          throw new Error("Failed to save notification settings");
+        }
+      } catch (error) {
+        console.error("Error saving notification settings:", error);
+        alert("通知設定の保存に失敗しました");
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="mb-4 text-2xl font-bold">
         野球場の空き状況ダッシュボード
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>日付選択</CardTitle>
+            <CardTitle>日付選択（監視する日付をクリック）</CardTitle>
           </CardHeader>
           <CardContent>
             <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
+              mode="multiple"
+              selected={monitoredDates}
+              onSelect={handleDateSelect}
               className="rounded-md border"
             />
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>フィルター</CardTitle>
+            <CardTitle>フィルターと通知設定</CardTitle>
           </CardHeader>
           <CardContent>
             <Select onValueChange={setSelectedField} value={selectedField}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="mb-4 w-full">
                 <SelectValue placeholder="グラウンドを選択" />
               </SelectTrigger>
               <SelectContent>
@@ -102,6 +136,9 @@ const Dashboard = () => {
                 ))}
               </SelectContent>
             </Select>
+            {session && (
+              <NotificationSettings onSave={handleNotificationSave} />
+            )}
           </CardContent>
         </Card>
       </div>
@@ -127,7 +164,11 @@ const Dashboard = () => {
                   <TableCell>{item.field}</TableCell>
                   <TableCell>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${item.available ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                      className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                        item.available
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
                     >
                       {item.available ? "空きあり" : "空きなし"}
                     </span>
@@ -143,6 +184,4 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

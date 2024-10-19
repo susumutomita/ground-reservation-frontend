@@ -1,33 +1,43 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../lib/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp, getApps, cert } from "firebase-admin/app";
+
+if (!getApps().length) {
+  initializeApp({
+    credential: cert(
+      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string)
+    ),
+  });
+}
+
+const db = getFirestore();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
-  if (req.method !== "GET") {
-    return res.status(405).end();
-  }
+  if (req.method === "GET") {
+    try {
+      let query = db.collection("availability");
 
-  const { date, ground } = req.query;
+      if (req.query.date) {
+        query = query.where("date", "==", req.query.date);
+      }
 
-  if (!date || !ground) {
-    return res.status(400).json({ error: "Missing date or ground parameter" });
-  }
+      if (req.query.field) {
+        query = query.where("field", "==", req.query.field);
+      }
 
-  try {
-    const q = query(
-      collection(db, "availability"),
-      where("date", "==", date),
-      where("ground", "==", ground),
-    );
+      const snapshot = await query.get();
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-    const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map((doc) => doc.data());
-
-    return res.status(200).json(data);
-  } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch data" });
+      res.status(200).json(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).json({ error: "Failed to fetch data" });
+    }
+  } else {
+    res.setHeader("Allow", ["GET"]);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
