@@ -111,7 +111,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <Calendar
-              selectedDate={selectedDate}
+              value={selectedDate}
               onSelect={handleDateSelect}
               className="rounded-md border"
             />
@@ -127,7 +127,7 @@ export default function Dashboard() {
                 <SelectValue placeholder="グラウンドを選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">全てのグラウンド</SelectItem>
+                <SelectItem value="all">全てのグラウンド</SelectItem>
                 {uniqueFields.map((field) => (
                   <SelectItem key={field} value={field}>
                     {field}
