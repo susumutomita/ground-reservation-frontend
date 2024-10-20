@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-const NotificationSettings = () => {
+export const NotificationSettings = () => {
   const [email, setEmail] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [date, setDate] = useState("");

@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { db } from "../../../lib/firebase";
 
 export default NextAuth({

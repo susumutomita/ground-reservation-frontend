@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,8 @@ export default function UserDropdown() {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
 
-  if (!session) {
+  // session と session.user の存在を確認
+  if (!session || !session.user) {
     return (
       <Link href="/api/auth/signin">
         <Button>サインイン</Button>
