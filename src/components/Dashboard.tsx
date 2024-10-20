@@ -77,7 +77,7 @@ export default function Dashboard() {
     type: "email" | "webhook",
     value: string
   ) => {
-    if (session && session.user) {
+    if (session?.user) {
       try {
         const response = await fetch("/api/save-notification-settings", {
           method: "POST",
