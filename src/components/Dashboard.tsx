@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -38,13 +39,8 @@ export default function Dashboard() {
   const [selectedField, setSelectedField] = useState<string | undefined>(
     undefined
   );
-  const [monitoredDates, setMonitoredDates] = useState<Date[]>([]);
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedDate, selectedField]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const queryParams = new URLSearchParams();
     if (selectedDate) {
       queryParams.append("date", format(selectedDate, "yyyy-MM-dd"));
@@ -63,16 +59,17 @@ export default function Dashboard() {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [selectedDate, selectedField]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const uniqueFields = Array.from(new Set(data.map((item) => item.field)));
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
-      if (!monitoredDates.some((d) => d.getTime() === date.getTime())) {
-        setMonitoredDates([...monitoredDates, date]);
-      }
     }
   };
 
@@ -80,12 +77,12 @@ export default function Dashboard() {
     type: "email" | "webhook",
     value: string
   ) => {
-    if (session) {
+    if (session?.user) {
       try {
         const response = await fetch("/api/save-notification-settings", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: session.user.id, type, value }),
+          body: JSON.stringify({ userId: session.user.email, type, value }),
         });
         if (response.ok) {
           alert("通知設定が保存されました");
@@ -96,6 +93,9 @@ export default function Dashboard() {
         console.error("Error saving notification settings:", error);
         alert("通知設定の保存に失敗しました");
       }
+    } else {
+      console.error("セッションまたはユーザー情報が未定義です。");
+      alert("ユーザー情報が取得できませんでした。再度ログインしてください。");
     }
   };
 
@@ -107,12 +107,11 @@ export default function Dashboard() {
       <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>日付選択（監視する日付をクリック）</CardTitle>
+            <CardTitle>日付選択</CardTitle>
           </CardHeader>
           <CardContent>
             <Calendar
-              mode="multiple"
-              selected={monitoredDates}
+              selectedDate={selectedDate}
               onSelect={handleDateSelect}
               className="rounded-md border"
             />
@@ -128,7 +127,7 @@ export default function Dashboard() {
                 <SelectValue placeholder="グラウンドを選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={undefined}>全てのグラウンド</SelectItem>
+                <SelectItem value="">全てのグラウンド</SelectItem>
                 {uniqueFields.map((field) => (
                   <SelectItem key={field} value={field}>
                     {field}
