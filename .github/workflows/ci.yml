@@ -1,10 +1,10 @@
-name: textlint
+name: ci
 on:
   push:
   workflow_dispatch:
 
 jobs:
-  textlint:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,6 +17,7 @@ jobs:
           cache: 'npm'
       - name: Install packages via packages.json
         run: make install
-      - name: Run textlint
-        run: |
-          make lint
+      - name: Lint
+        run: make lint
+      - name: Format check
+        run: make format_check
