@@ -22,6 +22,15 @@ import { NotificationSettings } from "@/components/NotificationSettings";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 
+// グローバルな型定義の拡張
+declare global {
+  interface Window {
+    difyChatbotConfig?: {
+      token: string;
+    };
+  }
+}
+
 interface FieldAvailability {
   id: string;
   date: string;
@@ -90,6 +99,25 @@ export default function Dashboard() {
       alert("ユーザー情報が取得できませんでした。再度ログインしてください。");
     }
   };
+
+  useEffect(() => {
+    // Difyチャットボットの設定
+    window.difyChatbotConfig = {
+      token: process.env.NEXT_PUBLIC_DIFY_CHATBOT_TOKEN || "",
+    };
+
+    // スクリプトの動的読み込み
+    const script = document.createElement("script");
+    script.src = "https://udify.app/embed.min.js";
+    script.id = process.env.NEXT_PUBLIC_DIFY_CHATBOT_TOKEN || "";
+    script.defer = true;
+    document.body.appendChild(script);
+
+    // クリーンアップ関数
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   return (
     <div className="container mx-auto p-4">
@@ -169,6 +197,16 @@ export default function Dashboard() {
       <div className="mt-4 flex justify-end">
         <Button onClick={fetchData}>データを更新</Button>
       </div>
+      {/* Difyチャットボットのスタイル */}
+      <style jsx global>{`
+        #dify-chatbot-bubble-button {
+          background-color: #1c64f2 !important;
+        }
+        #dify-chatbot-bubble-window {
+          width: 24rem !important;
+          height: 40rem !important;
+        }
+      `}</style>
     </div>
   );
 }
