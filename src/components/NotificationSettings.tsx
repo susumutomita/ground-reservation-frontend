@@ -1,13 +1,17 @@
-import { useState } from "react";
+import React from 'react';
 import axios from "axios";
 
-export const NotificationSettings = () => {
-  const [email, setEmail] = useState("");
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+interface NotificationSettingsProps {
+  onSave: (type: "email" | "webhook", value: string) => Promise<void>;
+}
 
-  const handleSubmit = async (e) => {
+export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) => {
+  const [email, setEmail] = React.useState("");
+  const [webhookUrl, setWebhookUrl] = React.useState("");
+  const [date, setDate] = React.useState("");
+  const [time, setTime] = React.useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -25,6 +29,12 @@ export const NotificationSettings = () => {
       console.error("Error saving notification settings:", error);
       alert("Failed to save notification settings.");
     }
+  };
+
+  const handleSave = () => {
+    // 例として、onSave 関数を呼び出す
+    onSave("email", email);
+    onSave("webhook", webhookUrl);
   };
 
   return (
@@ -73,6 +83,7 @@ export const NotificationSettings = () => {
         </div>
         <button type="submit">Save Settings</button>
       </form>
+      <button onClick={handleSave}>保存</button>
     </div>
   );
 };
