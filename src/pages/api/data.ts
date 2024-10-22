@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getFirestore } from "firebase-admin/firestore";
+import {
+  getFirestore,
+  Query,
+  CollectionReference,
+} from "firebase-admin/firestore";
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 
 if (!getApps().length) {
@@ -18,7 +22,7 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try {
-      let query = db.collection("availability");
+      let query: Query | CollectionReference = db.collection("availability");
 
       if (req.query.date) {
         query = query.where("date", "==", req.query.date);
