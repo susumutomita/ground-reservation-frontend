@@ -1,11 +1,13 @@
-import React from 'react';
+import React from "react";
 import axios from "axios";
 
 interface NotificationSettingsProps {
   onSave: (type: "email" | "webhook", value: string) => Promise<void>;
 }
 
-export const NotificationSettings: React.FC<NotificationSettingsProps> = ({ onSave }) => {
+export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
+  onSave,
+}) => {
   const [email, setEmail] = React.useState("");
   const [webhookUrl, setWebhookUrl] = React.useState("");
   const [date, setDate] = React.useState("");

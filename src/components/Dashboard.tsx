@@ -33,9 +33,7 @@ interface FieldAvailability {
 export default function Dashboard() {
   const { data: session } = useSession();
   const [data, setData] = useState<FieldAvailability[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date()
-  );
+  const [selectedDate] = useState<Date | undefined>(new Date());
   const [selectedField, setSelectedField] = useState<string | undefined>(
     undefined
   );
@@ -66,12 +64,6 @@ export default function Dashboard() {
   }, [fetchData]);
 
   const uniqueFields = Array.from(new Set(data.map((item) => item.field)));
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      setSelectedDate(date);
-    }
-  };
 
   const handleNotificationSave = async (
     type: "email" | "webhook",
@@ -110,11 +102,7 @@ export default function Dashboard() {
             <CardTitle>日付選択</CardTitle>
           </CardHeader>
           <CardContent>
-            <Calendar
-              value={selectedDate}
-              onSelect={handleDateSelect}
-              className="rounded-md border"
-            />
+            <Calendar />
           </CardContent>
         </Card>
         <Card>
