@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -20,57 +20,19 @@ import {
 } from "@/components/ui/select";
 import { NotificationSettings } from "@/components/NotificationSettings";
 import { useSession } from "next-auth/react";
-import { format } from "date-fns";
-
-// グローバルな型定義の拡張
-declare global {
-  interface Window {
-    difyChatbotConfig?: {
-      token: string;
-    };
-  }
-}
-
-interface FieldAvailability {
-  id: string;
-  date: string;
-  time: string;
-  field: string;
-  available: boolean;
-}
+import { FieldAvailability } from "@/types";
+import { useDifyChatbot } from "@/hooks/useDifyChatbot";
+import { useFieldData } from "@/hooks/useFieldData";
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  const [data, setData] = useState<FieldAvailability[]>([]);
   const [selectedDate] = useState<Date | undefined>(new Date());
   const [selectedField, setSelectedField] = useState<string | undefined>(
     undefined
   );
 
-  const fetchData = useCallback(async () => {
-    const queryParams = new URLSearchParams();
-    if (selectedDate) {
-      queryParams.append("date", format(selectedDate, "yyyy-MM-dd"));
-    }
-    if (selectedField) {
-      queryParams.append("field", selectedField);
-    }
-
-    try {
-      const response = await fetch(`/api/data?${queryParams.toString()}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      const fetchedData = await response.json();
-      setData(fetchedData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, [selectedDate, selectedField]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const { data, fetchData } = useFieldData(selectedDate, selectedField);
+  useDifyChatbot();
 
   const uniqueFields = Array.from(new Set(data.map((item) => item.field)));
 
@@ -99,25 +61,6 @@ export default function Dashboard() {
       alert("ユーザー情報が取得できませんでした。再度ログインしてください。");
     }
   };
-
-  useEffect(() => {
-    // Difyチャットボットの設定
-    window.difyChatbotConfig = {
-      token: process.env.NEXT_PUBLIC_DIFY_CHATBOT_TOKEN || "",
-    };
-
-    // スクリプトの動的読み込み
-    const script = document.createElement("script");
-    script.src = "https://udify.app/embed.min.js";
-    script.id = process.env.NEXT_PUBLIC_DIFY_CHATBOT_TOKEN || "";
-    script.defer = true;
-    document.body.appendChild(script);
-
-    // クリーンアップ関数
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   return (
     <div className="container mx-auto p-4">
@@ -197,7 +140,6 @@ export default function Dashboard() {
       <div className="mt-4 flex justify-end">
         <Button onClick={fetchData}>データを更新</Button>
       </div>
-      {/* Difyチャットボットのスタイル */}
       <style jsx global>{`
         #dify-chatbot-bubble-button {
           background-color: #1c64f2 !important;
