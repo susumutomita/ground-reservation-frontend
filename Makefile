@@ -40,6 +40,9 @@ docker_build:      # Build Docker Compose
 docker_up:         # Start Docker Compose
 	docker compose up
 
+docker_down:       # Stop Docker Compose
+	docker compose down
+
 docker_exec:       # Enter the container
 	docker compose exec app bash
 
