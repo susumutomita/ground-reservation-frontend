@@ -24,10 +24,18 @@ format_check:      # Check code formatting
 build_frontend:    # Build the frontend
 	npm run build
 
-start:             # Start the frontend
-	make start_frontend
+build: build_frontend    # Build the frontend
 
-start_frontend:    # Build the frontend
+# Testing
+test:              # Run tests
+	npm run test
+
+test\:watch:        # Run tests in watch mode
+	npm run test:watch
+
+start: start_frontend    # Start the frontend
+
+start_frontend:    # Start the frontend development server
 	npm run dev
 
 # Export Documentation
@@ -42,15 +50,4 @@ help:              # Show this help message
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
-	@echo "  install         Install npm packages"
-	@echo "  setup_husky     Setup Husky for git hooks"
-	@echo "  clean           Clean the project"
-	@echo "  lint            Run linter"
-	@echo "  format          Format code"
-	@echo "  format_check    Check code formatting"
-	@echo "  build_frontend  Build the frontend"
-	@echo "  start           Start the frontend"
-	@echo "  export_pdf      Export pitch deck to PDF using Marp"
-	@echo "  elavator_pitch  Export elevator pitch deck to PDF using Marp"
-	@echo "  before_commit   Run checks before commit"
-	@echo "  help            Show this help message"
+	@awk -F ':|#' '/^[a-zA-Z0-9_-]+:.*?#/ {printf "  %-15s %s\n", $$1, $$NF}' $(MAKEFILE_LIST) | sort

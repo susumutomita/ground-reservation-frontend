@@ -13,7 +13,9 @@ interface AvailabilityTableProps {
   data: FieldAvailability[];
 }
 
-export const AvailabilityTable: React.FC<AvailabilityTableProps> = ({ data }) => (
+export const AvailabilityTable: React.FC<AvailabilityTableProps> = ({
+  data,
+}) => (
   <Table>
     <TableHeader>
       <TableRow>

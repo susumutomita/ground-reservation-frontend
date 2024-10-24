@@ -3,7 +3,10 @@ import { useSession } from "next-auth/react";
 export const useNotificationSettings = () => {
   const { data: session } = useSession();
 
-  const saveNotificationSettings = async (type: "email" | "webhook", value: string) => {
+  const saveNotificationSettings = async (
+    type: "email" | "webhook",
+    value: string
+  ) => {
     if (session?.user) {
       try {
         const response = await fetch("/api/save-notification-settings", {

@@ -14,7 +14,9 @@ import { AvailabilityTable } from "@/components/AvailabilityTable";
 export default function Dashboard() {
   const { data: session } = useSession();
   const [selectedDate] = useState<Date | undefined>(new Date());
-  const [selectedField, setSelectedField] = useState<string | undefined>(undefined);
+  const [selectedField, setSelectedField] = useState<string | undefined>(
+    undefined
+  );
 
   const { data, fetchData } = useFieldData(selectedDate, selectedField);
   const { saveNotificationSettings } = useNotificationSettings();
@@ -24,7 +26,9 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="mb-4 text-2xl font-bold">野球場の空き状況ダッシュボード</h1>
+      <h1 className="mb-4 text-2xl font-bold">
+        野球場の空き状況ダッシュボード
+      </h1>
       <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <DateSelector />
         <Card>
