@@ -30,9 +30,23 @@ build: build_frontend    # Build the frontend
 test:              # Run tests
 	npm run test
 
-test\:watch:        # Run tests in watch mode
+test_watch:        # Run tests in watch mode
 	npm run test:watch
 
+# Docker Compose
+docker_build:      # Build Docker Compose
+	docker compose build
+
+docker_up:         # Start Docker Compose
+	docker compose up
+
+docker_down:       # Stop Docker Compose
+	docker compose down
+
+docker_exec:       # Enter the container
+	docker compose exec app bash
+
+# Start the frontend
 start: start_frontend    # Start the frontend
 
 start_frontend:    # Start the frontend development server

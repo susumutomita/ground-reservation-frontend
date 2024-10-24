@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000" # 必要に応じてポートを変更
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
